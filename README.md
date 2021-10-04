@@ -3,7 +3,7 @@
 * [Quick Start](#quick-start)
 	* [A. gitを使う方法](#A.-gitを使う方法)
 	* [B. zipでダウンロードする方法](#B.-zipでダウンロードする方法)
-* [How to use](# how-to-use)
+* [How to use](#how-to-use)
 * [Update history](#update-history)
 ## Quick start
 ### A. gitを使う方法
