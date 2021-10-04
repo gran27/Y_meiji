@@ -65,5 +65,5 @@ Y迷路に沿った線が表示されるので、確認する。確認し終わ�
 ![red circle](https://github.com/gran27/Y_meiji/blob/main/figs/incircle.png)
 
 ### Update history
-- 2020/10/01 ざっくり作成
+- 2021/10/01 ざっくり作成
 - 2021/10/04 8分に対応、Y迷路のほぼ自動認識の実装
