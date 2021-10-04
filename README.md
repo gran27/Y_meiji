@@ -39,7 +39,7 @@ Windowsキーを押してcmdと入力しEnter
   ```
 ### 3. 動画ファイルをdataフォルダに入れる
 ### 4. 実行
-オプションの使い方はこちら（未完成）を参照。
+オプションの使い方は[options.md](docs/options.md)を参照。
 - 例）01504.MTSを開始5.5秒の位置から評価するとき
   ```
   python tools/eval.py data/01504.MTS --show -s 5.5
