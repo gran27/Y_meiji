@@ -8,13 +8,13 @@
 ## Quick start
 ### A. gitを使う方法
 1. gitのインストール
-以下のサイトを参考にgitをインストールする。
+- 以下のサイトを参考にgitをインストールする。
 - [GitHubの導入〜基本操作 for Windows](https://qiita.com/Kenta-Okuda/items/c3dcd60a80a82147e1bf)
 - [【Windows】Gitの環境構築をしよう！](https://prog-8.com/docs/git-env-win)
 2. Git Bashを開く
-以降のコマンドはすべてGit Bashに入力していく。
+- 以降のコマンドはすべてGit Bashに入力していく。
 3. cloneする
-以下のコマンドを実行する。
+- 以下のコマンドを実行する。
 ```
 # Desktopに置くとき
 cd Desktop/Y_meiji
