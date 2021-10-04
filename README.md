@@ -3,9 +3,9 @@
 * [Quick Start](#quick-start)
 	* [A. gitを使う方法](#A.-gitを使う方法)
 	* [B. zipでダウンロードする方法](#B.-zipでダウンロードする方法)
-* [How to use](#how-to-use)
-* [Update history](#update-history)
-## Quick start
+* [How To Use](#how-to-use)
+* [Update History](#update-history)
+## Quick Start
 ### A. gitを使う方法
 1. gitのインストール
 - 以下のサイトを参考にgitをインストールする。
@@ -29,7 +29,7 @@ git clone https://github.com/gran27/Y_meiji.git
 - フォルダの名前をY_meijiに直しておく。
 ![savezip](https://github.com/gran27/Y_meiji/blob/main/figs/savezip.png)
 
-## How to use
+## How To Use
 ### 1. コマンドプロンプトを立ち上げる
 Windowsキーを押してcmdと入力しEnter
 ### 2. ダウンロードした場所まで移動する
@@ -64,6 +64,6 @@ Y迷路に沿った線が表示されるので、確認する。確認し終わ�
 - 中央の赤い円の内側にマウスがいる時は追跡しない。
 ![red circle](https://github.com/gran27/Y_meiji/blob/main/figs/incircle.png)
 
-### Update history
+### Update History
 - 2021/10/01 ざっくり作成
 - 2021/10/04 8分に対応、Y迷路のほぼ自動認識の実装
