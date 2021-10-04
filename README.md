@@ -1,10 +1,10 @@
 # Y-meiji
 ## Contents
-- [Quick Start](#quick start)
-	-[A. gitを使う方法](#A. gitを使う方法)
-	-[B. zipでダウンロードする方法](#B. zipでダウンロードする方法)
-- [How to use](# How to use)
-- [Update history](#Update history)
+* [Quick Start](#quick start)
+	* [A. gitを使う方法](#A. gitを使う方法)
+	* [B. zipでダウンロードする方法](#B. zipでダウンロードする方法)
+* [How to use](# How to use)
+* [Update history](#Update history)
 ## Quick start
 ### A. gitを使う方法
 1. gitのインストール
