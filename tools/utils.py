@@ -141,6 +141,13 @@ def coors_to_linearfunction(coor1, coor2, form="general"):
         return [m, c]
 
 
+def dist_point_line(coor, coef):
+    d = (abs(coef[0] * coor[0] + coef[1] * coor[1] + coef[2])) / (
+        (coef[0] ** 2 + coef[1] ** 2) ** (1 / 2)
+    )
+    return d
+
+
 def pixel_between(coor1, coor2):
     """
     Find coordinates on lines between two coordinates.

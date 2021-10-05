@@ -13,14 +13,15 @@
 - [【Windows】Gitの環境構築をしよう！](https://prog-8.com/docs/git-env-win)
 2. Git Bashを開く
 - 以降のコマンドはすべてGit Bashに入力していく。
-3. cloneする
+3. clone
 - 以下のコマンドを実行する。
 ```
 # Desktopに置くとき
 cd Desktop/Y_meiji
 git clone https://github.com/gran27/Y_meiji.git
 ```
-4. セットアップをする。
+4. セットアップ
+- 以下のコマンドを実行する。
 ```
 ./setup.sh
 ```

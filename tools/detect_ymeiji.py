@@ -4,7 +4,7 @@ import itertools
 import cv2
 import numpy as np
 
-import utils
+from . import utils
 
 
 def mask_green(img):

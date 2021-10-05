@@ -4,130 +4,38 @@ import csv
 import cv2
 import numpy as np
 
-import detect_ymeiji
+from . import detect_ymeiji
+from . import detect_mouse
+from . import utils
 
 
-def mask_mouse(img):
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    # 緑色のHSVの値域1
-    # hsv_min = np.array([25, 25, 30])
-    # hsv_max = np.array([50, 50, 60])
-
-    # hsv_min = np.array([140, 10, 30])
-    # hsv_max = np.array([170, 45, 50])
-
-    hsv_min = np.array([140, 10, 30])
-    hsv_max = np.array([175, 50, 50])
-
-    mask = cv2.inRange(img, hsv_min, hsv_max)
-
-    white = np.full(img.shape, 255, dtype=img.dtype)
-    background = cv2.bitwise_and(
-        white, white, mask=mask
-    )  # detected mouse area becomes white
-
-    inv_mask = cv2.bitwise_not(mask)  # make mask for not-mouse area
-    extracted = cv2.bitwise_and(img, img, mask=inv_mask)
-
-    masked = cv2.add(extracted, background)
-
-    return masked
-
-
-def detect_arm(img, coefs_line):
+def detect_arm(img, center, coefs_line, radius_range):
     arms_name = ["A", "B", "C"]
-    img = cv2.resize(img, dsize=None, fx=0.5, fy=0.5)
-    cv2.circle(
-        img,
-        (int(coefs_line[3][0]), int(coefs_line[3][1])),
-        int(coefs_line[4][0]),
-        (0, 0, 255),
-        2,
-    )
+    mouse_pos = detect_mouse.get_mousepos(img)
 
-    # img_maskgreen = mask_green(img)
-    # img_gray = cv2.cvtColor(img_maskgreen, cv2.COLOR_BGR2GRAY)
-    # _, img = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU)
-    # _, img_binary1 = cv2.threshold(img_gray, 100, 255, cv2.THRESH_BINARY)
-
-    kernel = np.ones((2, 2), np.uint8)
-    img_maskmouse = mask_mouse(img)
-    img_gray = cv2.cvtColor(img_maskmouse, cv2.COLOR_BGR2GRAY)
-    _, img_binary2 = cv2.threshold(img_gray, 250, 255, cv2.THRESH_BINARY)
-    # img_er = cv2.erode(img_binary2, kernel, iterations=1)
-    # img_dl = cv2.dilate(img_er, kernel, iterations=3)
-    # img_opening2 = cv2.morphologyEx(img_binary2, cv2.MORPH_OPEN, kernel)
-    img_closing = cv2.morphologyEx(img_binary2, cv2.MORPH_CLOSE, kernel)
-
-    # img = img_closing
-    # img2 = cv2.bitwise_not(img_closing)
-    contours, hierarchy = cv2.findContours(
-        img_closing, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
-    )
-
-    arm = ""
-    if contours:
-        contours = max(contours, key=lambda x: cv2.contourArea(x))
-        x, y, w, h = cv2.boundingRect(contours)
-        center_x = x + w / 2
-        center_y = y + h / 2
-        d_min = 10000
-
-        r = (
-            (center_x - coefs_line[3][0]) ** 2 + (center_y - coefs_line[3][1]) ** 2
-        ) ** (1 / 2)
-        # print(r)
-        # print("min", coefs_line[4][0])
-        # print("max", coefs_line[4][1])
-        if r < coefs_line[4][0] or r > coefs_line[4][1]:
-            pass
-        else:
+    if mouse_pos is not None:
+        x, y, w, h = mouse_pos
+        mouse_pos = [x + w / 2, y + h / 2]
+        r = utils.dist_between(center, mouse_pos)
+        if r >= radius_range[0] and r <= radius_range[1]:
+            img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 3)
             for i in range(3):
-                d = (
-                    abs(
-                        coefs_line[i][0] * center_x
-                        + coefs_line[i][1] * center_y
-                        + coefs_line[i][2]
-                    )
-                ) / ((coefs_line[i][0] ** 2 + coefs_line[i][1] ** 2) ** (1 / 2))
-                if d < d_min:
+                d = utils.dist_point_line(mouse_pos, coefs_line[i])
+                if i == 0:
                     d_min = d
                     arm = arms_name[i]
-
-            # print(f"\r{w*h}\t{w * h>500}\t{arm}", end="")
-
-            img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 3)
+                elif d < d_min:
+                    d_min = d
+                    arm = arms_name[i]
+        else:
+            return img, None
+    else:
+        return img, None
 
     return img, arm
 
 
-def get_coefs(points):
-    coefs = np.zeros((5, 3))
-    coefs[3][0] = points[0][0]  # center_x
-    coefs[3][1] = points[0][1]  # center_y
-    # coefs[4][0]: r_min
-    # coefs[4][1]: r_max
-    coefs[4][1] = 99999
-
-    for i in range(3):
-        m = (points[i + 1][1] - points[0][1]) / (points[i + 1][0] - points[0][0])
-        a = m
-        b = -1
-        c = points[0][1] - m * points[0][0]
-        coefs[i] = [a, b, c]
-        r = (
-            (points[i + 1][1] - points[0][1]) ** 2
-            + (points[i + 1][0] - points[0][0]) ** 2
-        ) ** (1 / 2)
-        if r < coefs[4][1]:
-            coefs[4][1] = r
-    coefs[4][0] = coefs[4][1] * 0.15
-    # print(coefs)
-
-    return coefs
-
-
-def create_armslist(file, coefs, start, end, show=False):
+def create_armslist(file, center, coefs_line, radius_range, start, end, show=False):
     arms = []
     prev_arm = ""
 
@@ -150,6 +58,7 @@ def create_armslist(file, coefs, start, end, show=False):
             ret, frame = cap.read()
             # print(ret, frame)
             if ret:
+                frame = cv2.resize(frame, dsize=None, fx=0.5, fy=0.5)
                 frame_no = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
                 now_second = int(frame_no / cap.get(cv2.CAP_PROP_FPS))
                 min, sec = divmod(now_second, 60)
@@ -157,8 +66,15 @@ def create_armslist(file, coefs, start, end, show=False):
                 if frame_no > end * cap.get(cv2.CAP_PROP_FPS):
                     break
                 w, h, _ = frame.shape
-                frame, arm = detect_arm(frame, coefs)
-                if prev_arm != arm and arm != "":
+                frame, arm = detect_arm(frame, center, coefs_line, radius_range)
+                cv2.circle(
+                    frame,
+                    (int(center[0]), int(center[1])),
+                    int(radius_range[0]),
+                    (0, 0, 255),
+                    2,
+                )
+                if prev_arm != arm and arm is not None:
                     arms.append(arm)
                     prev_arm = arm
                     print(arm)
@@ -190,7 +106,7 @@ def create_armslist(file, coefs, start, end, show=False):
                     cv2.putText(
                         frame,
                         prev_arm,
-                        org=(int(w * 0.1), int(h * 0.1)),
+                        org=(int(w * 0.1), int(h * 0.2)),
                         fontFace=cv2.FONT_HERSHEY_TRIPLEX,
                         fontScale=3.0,
                         color=(255, 255, 255),
@@ -200,7 +116,7 @@ def create_armslist(file, coefs, start, end, show=False):
                     cv2.putText(
                         frame,
                         prev_arm,
-                        org=(int(w * 0.1), int(h * 0.1)),
+                        org=(int(w * 0.1), int(h * 0.2)),
                         fontFace=cv2.FONT_HERSHEY_TRIPLEX,
                         fontScale=3.0,
                         color=(0, 0, 0),
@@ -221,6 +137,22 @@ def create_armslist(file, coefs, start, end, show=False):
     cv2.destroyAllWindows()
 
     return arms
+
+
+def get_coefs(center, edges):
+    coefs = np.zeros((3, 3))
+
+    for i in range(3):
+        coefs[i] = utils.coors_to_linearfunction(center, edges[i], form="general")
+        r = utils.dist_between(center, edges[i])
+        if i == 0:
+            r_max = r
+        elif r < r_max:
+            r_max = r
+    r_min = r_max * 0.15
+    radius_range = [r_min, r_max]
+
+    return coefs, radius_range
 
 
 def check_filelen(file, shift):
@@ -295,21 +227,14 @@ def main(args):
     outfile = outfile.replace(ext, args.output).replace("data", "result")
 
     start, end = check_filelen(file, shift)  # second
-
-    points = np.zeros((4, 2), np.int)
-    # point_name = ["Center", "A", "B", "C"]
     center, edges = detect_ymeiji.getpoints(file)
-    points[0] = center
-    for i in range(3):
-        points[i + 1] = edges[i]
-    # points = np.array([[485, 301], [250, 376], [533, 73], [669, 465]])
-    coefs = get_coefs(points)
+    coefs_line, radius_range = get_coefs(center, edges)
 
     if show:
         print("中断するにはqを押してください")
     else:
         print("中断するにはCtrl+cを押してください")
-    arms = create_armslist(file, coefs, start, end, show)
+    arms = create_armslist(file, center, coefs_line, radius_range, start, end, show)
     activity, working_memory = evaluation(arms)
     print("activity:", activity)
     print("working_memory:", f"{working_memory:.2f}")
