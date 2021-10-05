@@ -6,11 +6,8 @@ import numpy as np
 
 from . import utils
 
-
+"""
 def mask_green(img):
-    """
-    unuesd
-    """
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     hsv_min = np.array([30, 30, 0])
     hsv_max = np.array([90, 255, 255])
@@ -19,8 +16,7 @@ def mask_green(img):
     inv_mask = cv2.bitwise_not(mask)
     print(inv_mask.shape)
     return inv_mask
-
-
+"""
 """
 def mask_gray(img):
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -68,7 +64,7 @@ def getpoints_auto(file, playback_pos=0.5):
         _, img_binary = cv2.threshold(img_gray, 100, 255, cv2.THRESH_BINARY)
         img_ero = cv2.erode(img_binary, kernel, iterations=1)
         img_dil = cv2.dilate(img_ero, kernel, iterations=3)
-        img_draw = cv2.dilate(img_ero, kernel, iterations=5)
+        # img_draw = cv2.dilate(img_ero, kernel, iterations=5)
         # th, img_binary = cv2.threshold(img_gray, 0, 255, cv2.THRESH_OTSU)
         # print(th)
 

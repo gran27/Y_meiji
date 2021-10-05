@@ -241,29 +241,6 @@ def main(args):
     save(outfile, arms, activity, working_memory)
 
 
-def debug1(args):
-    img = cv2.imread("mouse.png")
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    # cv2.imshow("frame", img)
-    # img = np.where(img > 100, 0, img)
-    img_max = np.max(img, axis=0)
-    img_max = np.max(img_max, axis=0)
-    print(img_max)
-    img_min = np.min(img, axis=0)
-    img_min = np.min(img_min, axis=0)
-    print(img_min)
-
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-
-def debug2(args):
-    arms = ["A", "F", "D"]
-    activity = 27
-    working_memory = 65.635
-    save("./result/01504.txt", arms, activity, working_memory)
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Evaluation for mouse Y_meiji experiment."
@@ -289,6 +266,4 @@ if __name__ == "__main__":
     )
     parser.add_argument("--show", action="store_true", help="show visualization")
     args = parser.parse_args()
-    # debug(args)
-    # debug2(args)
     main(args)
