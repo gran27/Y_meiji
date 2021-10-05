@@ -43,12 +43,12 @@ Windowsキーを押してcmdと入力しEnter
 オプションの使い方は[options.md](docs/options.md)を参照。
 - 例）01504.MTSを開始5.5秒の位置から評価するとき
   ```
-  python tools/eval.py data/01504.MTS --show -s 5.5
+  python run.py data/01504.MTS --show -s 5.5
   ```
 #### 注意
 - -sオプションの数字はマウスを置いた瞬間に合わせること。この時間から8分がカウントされる。
 - 開始位置から動画の長さが8分もないときはプログラムが中断される。  
-  例）動画の長さが8分5秒で`python tools/eval.py data/XXXXX.MTS -s 10`と実行したとき
+  例）動画の長さが8分5秒で`python run.py data/XXXXX.MTS -s 10`と実行したとき
 ### 5. Y迷路の予測を確認する。
 Y迷路に沿った線が表示されるので、確認する。確認し終わったら何かキーを押す（だいたいなんでもOK）。
 - 良い例
